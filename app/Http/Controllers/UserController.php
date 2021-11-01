@@ -28,14 +28,19 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required',
+            'name' => ['required' , 'regex:/^[\pL\s\-]+$/u', 'min:3', 'max:30'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x]).(?=.*[!$#%]).{8,}.*$/'],
         ], [
             'name.required' => 'El campo nombre es obligatorio',
+            'name.regex' => 'El campo nombre no puede tener valores numéricos',
+            'name.min' => 'El campo nombre debe tener como mínimo 3 carácteres',
+            'name.max' => 'El campo nombre debe tener como máximo 30 carácteres',
             'email.required' => 'El campo email es obligatorio',
-            'password.required' => 'El campo contraseña es obligatorio',
+            'email.email' => 'El email introducido no tiene un formato válido',
             'email.unique' => 'Ese email ya existe en la BD',
+            'password.required' => 'El campo contraseña es obligatorio',
+            'password.regex' => 'La contraseña debe tener mínimo una mayúscula, una minúscula, un número y un dígito alfanumérico(!$#%])',
         ]);
 
         User::create([
